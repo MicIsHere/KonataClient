@@ -11,7 +11,7 @@ mainmenu.notlatest=检测到新版本！最新版本：%s，点此更新
 
 music.title=音乐
 music.search=搜索
-music.disabled=音乐功能已关闭，详情查看 fpsmaster.top/faq/music
+music.disabled=音乐功能已关闭，详情查看 konata.cutemic.cn/faq/music
 music.name=搜索名称
 music.list=搜索歌单ID
 music.daily=日推
@@ -31,7 +31,7 @@ oobe.welcome.title=欢迎
 oobe.welcome.next=下一步
 oobe.login.privacy=我们将收集部分匿名数据用于改善体验，继续则默认同意《隐私条款》《服务条款》
 oobe.login.title=登录账号
-oobe.login.desc=您可以前往FPSMaster官方网站注册
+oobe.login.desc=您可以前往Konata官方网站注册
 oobe.login.username=用户名
 oobe.login.password=密码
 oobe.login.register=注册账号
@@ -467,6 +467,29 @@ dragonwings.chroma=彩色
 directiondisplay=方向显示
 directiondisplay.desc=显示一个指南针
 
+# Zombies
+theoldonecheck=长者检查
+theoldonecheck.desc=当出现长者时进行警告措施
+theoldonecheck.sendmessage=发送警告信息
+theoldonecheck.damagerender=受伤时渲染
+theoldonecheck.rendermode=渲染模式
+theoldonecheck.rendermode.1=不渲染
+theoldonecheck.rendermode.2=填充与描边
+theoldonecheck.rendermode.3=仅描边
+theoldonecheck.rendermode.4=仅填充
+theoldonecheck.color=颜色
+theoldonecheck.debug=调试模式
+theoldonecheck.message=警告，对局中可能发现长者！
+
+smartweapon=智能武器
+smartweapon.desc=自动在适当时间切换需要的武器
+smartweapon.sendmessage=发送警告信息
+smartweapon.fill=填充
+smartweapon.fillcolor=填充颜色
+smartweapon.outline=描边
+smartweapon.outlinecolor=描边颜色
+smartweapon.width=描边宽度
+
 # 类别
 category.optimize=优化
 category.render=视觉
@@ -475,6 +498,7 @@ category.interface=界面
 category.music=音乐
 category.theme=主题
 category.ornament=饰品
+category.zombies=僵尸末日
 
 # 通知
 notification.module.enable=功能开启

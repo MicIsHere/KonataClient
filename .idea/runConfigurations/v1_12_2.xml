@@ -1,7 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="v1.12.2" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="net.fabricmc.devlaunchinjector.Main" />
-    <module name="v1.12.2.main" />
     <option name="VM_PARAMETERS" value="-Dfabric.dli.config=/v1.12.2/.gradle/loom-cache/launch.cfg -Dfabric.dli.env=client -Dfabric.dli.main=net.minecraft.launchwrapper.Launch" />
     <option name="WORKING_DIRECTORY" value="E:/Minecraft/.minecraft" />
     <extension name="net.ashald.envfile">

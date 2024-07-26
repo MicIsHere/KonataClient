@@ -12,7 +12,7 @@ mainmenu.toupdate=, Click here to update!
 
 music.title=Music
 music.search=Search
-music.disabled=Music function is off, check details at fpsmaster.top/faq/music
+music.disabled=Music function is off, check details at konata.cutemic.cn/faq/music
 music.name=Search Name
 music.list=Search Playlist ID
 music.notloggedin=Not logged in
@@ -30,7 +30,7 @@ oobe.welcome.title=Welcome
 oobe.welcome.next=Next
 oobe.login.privacy=We collect some anonymous data to improve experience, by continuing you agree to "Privacy Policy" and "Terms of Service"
 oobe.login.title=Login Account
-oobe.login.desc=You can register on the official FPSMaster website
+oobe.login.desc=You can register on the official Konata website
 oobe.login.username=Username
 oobe.login.password=Password
 oobe.login.register=Register Account
