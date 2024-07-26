@@ -30,12 +30,11 @@ import java.lang.reflect.Field
 class TheOldOneCheck : Module("TheOldOneCheck", Category.Zombies) {
     private var sendMessage = BooleanSetting("SendMessage", false)
     private var damageRender = BooleanSetting("DamageRender", false)
-    private var debug = BooleanSetting("Debug", false)
     private var mode = ModeSetting("RenderMode", 0,"1", "2", "3", "4")
-    private var color1 = ColorSetting("Color", Color(255, 255, 255, 50))
+    private var color = ColorSetting("Color", Color(255, 255, 255, 50))
 
     init {
-        addSettings(color1,sendMessage, damageRender, mode, debug)
+        addSettings(color,sendMessage, damageRender, mode)
     }
 
     override fun onEnable() {
@@ -108,7 +107,7 @@ class TheOldOneCheck : Module("TheOldOneCheck", Category.Zombies) {
                         Utility.sendClientMessage(Konata.i18n["theoldonecheck.message"])
                     }
 
-                    renderEntity(it, color1.color.rgb, damageRender.value, mode.mode)
+                    renderEntity(it, color.color.rgb, damageRender.value, mode.mode)
                 }
 
             sended = false
@@ -130,51 +129,17 @@ class TheOldOneCheck : Module("TheOldOneCheck", Category.Zombies) {
         val r = (color shr 16 and 0xFF) / 255.0f
         val g = (color shr 8 and 0xFF) / 255.0f
         val b = (color and 0xFF) / 255.0f
-        if (type == 1) {
-            GlStateManager.pushMatrix()
-            GL11.glBlendFunc(770, 771)
-            GL11.glEnable(3042)
-            GL11.glDisable(3553)
-            GL11.glDisable(2929)
-            GL11.glDepthMask(false)
-            GL11.glLineWidth(3.0f)
-            GL11.glColor4f(r, g, b, a)
-            Render3DUtils.drawBoundingBoxOutline(
-                WrapperAxisAlignedBB(
-                    e.entityBoundingBox.minX - 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
-                    e.entityBoundingBox.minY - e.posY + (e.posY - mc.renderManager.viewerPosY),
-                    e.entityBoundingBox.minZ - 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ),
-                    e.entityBoundingBox.maxX + 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
-                    e.entityBoundingBox.maxY + 0.1 - e.posY + (e.posY - mc.renderManager.viewerPosY),
-                    e.entityBoundingBox.maxZ + 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ)
-                )
-            )
-            drawAxisAlignedBB(
-                AxisAlignedBB(
-                    e.entityBoundingBox.minX - 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
-                    e.entityBoundingBox.minY - e.posY + (e.posY - mc.renderManager.viewerPosY),
-                    e.entityBoundingBox.minZ - 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ),
-                    e.entityBoundingBox.maxX + 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
-                    e.entityBoundingBox.maxY + 0.1 - e.posY + (e.posY - mc.renderManager.viewerPosY),
-                    e.entityBoundingBox.maxZ + 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ)
-                ), r, g, b
-            )
-            GL11.glEnable(3553)
-            GL11.glEnable(2929)
-            GL11.glDepthMask(true)
-            GL11.glDisable(3042)
-            GlStateManager.popMatrix()
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f)
-        } else if (type == 2 || type == 3) {
-            val mode = type == 2
-            GL11.glBlendFunc(770, 771)
-            GL11.glEnable(3042)
-            GL11.glLineWidth(3.0f)
-            GL11.glDisable(3553)
-            GL11.glDisable(2929)
-            GL11.glDepthMask(false)
-            GL11.glColor4d(r.toDouble(), g.toDouble(), b.toDouble(), a.toDouble())
-            if (mode) {
+
+        when (type){
+            1 -> {
+                GlStateManager.pushMatrix()
+                GL11.glBlendFunc(770, 771)
+                GL11.glEnable(3042)
+                GL11.glDisable(3553)
+                GL11.glDisable(2929)
+                GL11.glDepthMask(false)
+                GL11.glLineWidth(3.0f)
+                GL11.glColor4f(r, g, b, a)
                 Render3DUtils.drawBoundingBoxOutline(
                     WrapperAxisAlignedBB(
                         e.entityBoundingBox.minX - 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
@@ -185,7 +150,6 @@ class TheOldOneCheck : Module("TheOldOneCheck", Category.Zombies) {
                         e.entityBoundingBox.maxZ + 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ)
                     )
                 )
-            } else {
                 drawAxisAlignedBB(
                     AxisAlignedBB(
                         e.entityBoundingBox.minX - 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
@@ -196,27 +160,69 @@ class TheOldOneCheck : Module("TheOldOneCheck", Category.Zombies) {
                         e.entityBoundingBox.maxZ + 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ)
                     ), r, g, b
                 )
+                GL11.glEnable(3553)
+                GL11.glEnable(2929)
+                GL11.glDepthMask(true)
+                GL11.glDisable(3042)
+                GlStateManager.popMatrix()
+                GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f)
             }
-            GL11.glEnable(3553)
-            GL11.glEnable(2929)
-            GL11.glDepthMask(true)
-            GL11.glDisable(3042)
-        } else if (type == 4) {
-            GL11.glPushMatrix()
-            GL11.glTranslated(x, y - 0.2, z)
-            GL11.glScalef(0.03f, 0.03f, 0.03f)
-            GL11.glRotated(-mc.renderManager.playerViewY as Double, 0.0, 1.0, 0.0)
-            GlStateManager.disableDepth()
-            Gui.drawRect(-20, -1, -26, 75, Color.black.rgb)
-            Gui.drawRect(-21, 0, -25, 74, color)
-            Gui.drawRect(20, -1, 26, 75, Color.black.rgb)
-            Gui.drawRect(21, 0, 25, 74, color)
-            Gui.drawRect(-20, -1, 21, 5, Color.black.rgb)
-            Gui.drawRect(-21, 0, 24, 4, color)
-            Gui.drawRect(-20, 70, 21, 75, Color.black.rgb)
-            Gui.drawRect(-21, 71, 25, 74, color)
-            GlStateManager.enableDepth()
-            GL11.glPopMatrix()
+
+            2, 3 ->{
+                val mode = type == 2
+                GL11.glBlendFunc(770, 771)
+                GL11.glEnable(3042)
+                GL11.glLineWidth(3.0f)
+                GL11.glDisable(3553)
+                GL11.glDisable(2929)
+                GL11.glDepthMask(false)
+                GL11.glColor4d(r.toDouble(), g.toDouble(), b.toDouble(), a.toDouble())
+                if (mode) {
+                    Render3DUtils.drawBoundingBoxOutline(
+                        WrapperAxisAlignedBB(
+                            e.entityBoundingBox.minX - 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
+                            e.entityBoundingBox.minY - e.posY + (e.posY - mc.renderManager.viewerPosY),
+                            e.entityBoundingBox.minZ - 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ),
+                            e.entityBoundingBox.maxX + 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
+                            e.entityBoundingBox.maxY + 0.1 - e.posY + (e.posY - mc.renderManager.viewerPosY),
+                            e.entityBoundingBox.maxZ + 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ)
+                        )
+                    )
+                } else {
+                    drawAxisAlignedBB(
+                        AxisAlignedBB(
+                            e.entityBoundingBox.minX - 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
+                            e.entityBoundingBox.minY - e.posY + (e.posY - mc.renderManager.viewerPosY),
+                            e.entityBoundingBox.minZ - 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ),
+                            e.entityBoundingBox.maxX + 0.05 - e.posX + (e.posX - mc.renderManager.viewerPosX),
+                            e.entityBoundingBox.maxY + 0.1 - e.posY + (e.posY - mc.renderManager.viewerPosY),
+                            e.entityBoundingBox.maxZ + 0.05 - e.posZ + (e.posZ - mc.renderManager.viewerPosZ)
+                        ), r, g, b
+                    )
+                }
+                GL11.glEnable(3553)
+                GL11.glEnable(2929)
+                GL11.glDepthMask(true)
+                GL11.glDisable(3042)
+            }
+
+            4 -> {
+                GL11.glPushMatrix()
+                GL11.glTranslated(x, y - 0.2, z)
+                GL11.glScalef(0.03f, 0.03f, 0.03f)
+                GL11.glRotated(-mc.renderManager.playerViewY as Double, 0.0, 1.0, 0.0)
+                GlStateManager.disableDepth()
+                Gui.drawRect(-20, -1, -26, 75, Color.black.rgb)
+                Gui.drawRect(-21, 0, -25, 74, color)
+                Gui.drawRect(20, -1, 26, 75, Color.black.rgb)
+                Gui.drawRect(21, 0, 25, 74, color)
+                Gui.drawRect(-20, -1, 21, 5, Color.black.rgb)
+                Gui.drawRect(-21, 0, 24, 4, color)
+                Gui.drawRect(-20, 70, 21, 75, Color.black.rgb)
+                Gui.drawRect(-21, 71, 25, 74, color)
+                GlStateManager.enableDepth()
+                GL11.glPopMatrix()
+            }
         }
     }
 
