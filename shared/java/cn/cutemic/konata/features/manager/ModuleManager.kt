@@ -10,9 +10,7 @@ import cn.cutemic.konata.features.impl.interfaces.*
 import cn.cutemic.konata.features.impl.optimizes.*
 import cn.cutemic.konata.features.impl.render.*
 import cn.cutemic.konata.features.impl.utility.*
-import cn.cutemic.konata.features.impl.zombies.HidePlayer
 import cn.cutemic.konata.features.impl.zombies.TheOldOneCheck
-import cn.cutemic.konata.features.impl.zombies.ZombiesCheck
 import cn.cutemic.konata.interfaces.ProviderManager
 import cn.cutemic.konata.ui.click.MainPanel
 import java.util.*
@@ -99,9 +97,6 @@ class ModuleManager {
         modules.add(MiniMap())
         modules.add(DirectionDisplay())
         modules.add(TheOldOneCheck())
-        modules.add(ZombiesCheck())
-        modules.add(AutoHypixel())
-        modules.add(HidePlayer())
 
         if (ProviderManager.constants.getVersion() == "1.12.2") {
             modules.add(HideIndicator())
