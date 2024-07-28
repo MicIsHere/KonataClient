@@ -42,7 +42,8 @@ class AimAssist : Module("AimAssist", Category.Zombies) {
 
     private val feedbackRate
         get() = if (Mouse.getEventButtonState() && Mouse.getEventButton() == 0)
-            leftCompensation.value.toDouble() else rightCompensation.value.toDouble()
+            leftCompensation.value.toDouble() else if (Mouse.getEventButtonState() && Mouse.getEventButton() == 1)
+                rightCompensation.value.toDouble() else 0.0
 
     @Subscribe
     fun onRender(event: EventRender3D) {
