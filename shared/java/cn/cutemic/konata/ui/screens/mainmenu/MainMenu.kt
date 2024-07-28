@@ -112,32 +112,35 @@ class MainMenu : GuiScreen() {
             this.height - 14,
             Color(255, 255, 255, 50).rgb
         )
-        welcome = if (Konata.INSTANCE.loggedIn) {
-            TextFormattingProvider.getGreen()
-                .toString() + String.format(
-                Konata.i18n["mainmenu.welcome"], Konata.configManager.configure.getOrCreate(
-                    "username",
-                    ""
-                )
-            )
-        } else {
-            TextFormattingProvider.getRed()
-                .toString() + TextFormattingProvider.getBold()
-                .toString() + Konata.i18n["mainmenu.notlogin"]
-        }
-        Konata.fontManager.s16.drawString(welcome, 4, this.height - 52, Color(255, 255, 255).rgb)
 
-        if (Konata.updateFailed) {
-            info = TextFormattingProvider.getGreen().toString() + Konata.i18n["mainmenu.failed"]
-        } else {
-            if (Konata.isLatest) {
-                info = TextFormattingProvider.getGreen().toString() + Konata.i18n["mainmenu.latest"]
-            } else {
-                info = TextFormattingProvider.getRed().toString() + TextFormattingProvider.getBold()
-                    .toString() + String.format(Konata.i18n["mainmenu.notlatest"], Konata.latest)
-                needUpdate = true
-            }
-        }
+        //FPSMaster登录显示及更新提示
+//        welcome = if (Konata.INSTANCE.loggedIn) {
+//            TextFormattingProvider.getGreen()
+//                .toString() + String.format(
+//                Konata.i18n["mainmenu.welcome"], Konata.configManager.configure.getOrCreate(
+//                    "username",
+//                    ""
+//                )
+//            )
+//        } else {
+//            TextFormattingProvider.getRed()
+//                .toString() + TextFormattingProvider.getBold()
+//                .toString() + Konata.i18n["mainmenu.notlogin"]
+//        }
+//        Konata.fontManager.s16.drawString(welcome, 4, this.height - 52, Color(255, 255, 255).rgb)
+//
+//        if (Konata.updateFailed) {
+//            info = TextFormattingProvider.getGreen().toString() + Konata.i18n["mainmenu.failed"]
+//        } else {
+//            if (Konata.isLatest) {
+//                info = TextFormattingProvider.getGreen().toString() + Konata.i18n["mainmenu.latest"]
+//            } else {
+//                info = TextFormattingProvider.getRed().toString() + TextFormattingProvider.getBold()
+//                    .toString() + String.format(Konata.i18n["mainmenu.notlatest"], Konata.latest)
+//                needUpdate = true
+//            }
+//        }
+
         Konata.fontManager.s16.drawString(info, 4, this.height - 40, Color(255, 255, 255).rgb)
 
         Render2DUtils.drawRect(0f, 0f, 0f, 0f, -1)
