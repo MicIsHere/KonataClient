@@ -33,6 +33,8 @@ class TheOldOneCheck : Module("TheOldOneCheck", Category.Zombies) {
     private var mode = ModeSetting("RenderMode", 0,"1", "2", "3", "4")
     private var color = ColorSetting("Color", Color(255, 255, 255, 50))
 
+    private var sended = false
+
     init {
         addSettings(color,sendMessage, damageRender, mode)
     }
@@ -85,9 +87,6 @@ class TheOldOneCheck : Module("TheOldOneCheck", Category.Zombies) {
 
     @Subscribe
     fun onRender3D(e: EventRender3D) {
-
-        var sended = false
-
         if (mc.theWorld.loadedEntityList != null){
             mc.theWorld.loadedEntityList.stream()
                 .filter { !it.isDead } // 过滤未死亡的实体

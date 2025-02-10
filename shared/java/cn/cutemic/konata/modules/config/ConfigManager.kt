@@ -128,7 +128,6 @@ class ConfigManager {
             getModule(OldAnimations::class.java).set(true)
             getModule(ItemPhysics::class.java).set(true)
             getModule(ClientCommand::class.java).set(true)
-            getModule(IRC::class.java).set(true)
         }
     }
 }

@@ -147,7 +147,7 @@ class Konata {
         const val FILE_API = "https://files.fpsmaster.top"
 
         const val EDITION = Constants.EDITION
-        const val COPYRIGHT = "Copyright ©2024  CuteMic  Some Rights Reserved."
+        const val COPYRIGHT = "Copyright © 2024-2025 CuteMic Some Rights Reserved."
 
         @JvmField
         var INSTANCE = Konata()
@@ -156,7 +156,7 @@ class Konata {
         var CLIENT_NAME = "Konata"
 
         @JvmField
-        var CLIENT_VERSION = "B1"
+        var CLIENT_VERSION = "B2"
 
         @JvmField
         var theme: Theme = DarkTheme()

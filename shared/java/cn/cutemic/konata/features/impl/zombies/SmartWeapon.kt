@@ -1,36 +1,43 @@
 package cn.cutemic.konata.features.impl.zombies
 
 import cn.cutemic.konata.Konata
-import net.minecraft.block.BlockStairs
-import net.minecraft.client.renderer.GlStateManager
-import org.lwjgl.opengl.GL11
 import cn.cutemic.konata.event.Subscribe
-import cn.cutemic.konata.event.events.EventRender3D
+import cn.cutemic.konata.event.events.EventMouseClick
+import cn.cutemic.konata.event.events.EventTick
+import cn.cutemic.konata.event.events.EventUpdate
+import cn.cutemic.konata.features.impl.interfaces.Key
 import cn.cutemic.konata.features.manager.Category
 import cn.cutemic.konata.features.manager.Module
 import cn.cutemic.konata.features.settings.impl.BooleanSetting
-import cn.cutemic.konata.features.settings.impl.ColorSetting
+import cn.cutemic.konata.features.settings.impl.ModeSetting
 import cn.cutemic.konata.features.settings.impl.NumberSetting
-import cn.cutemic.konata.utils.render.Render3DUtils
-import cn.cutemic.konata.interfaces.ProviderManager
+import cn.cutemic.konata.ui.notification.NotificationManager
 import cn.cutemic.konata.utils.Utility
-import cn.cutemic.konata.wrapper.blockpos.WrapperBlockPos
-import cn.cutemic.konata.wrapper.util.WrapperAxisAlignedBB
-import net.minecraft.entity.Entity
-import net.minecraft.entity.monster.EntityGiantZombie
-import net.minecraft.entity.monster.EntityZombie
-import java.awt.Color
+import cn.cutemic.konata.utils.timing.TickTimer
+import cn.cutemic.konata.utils.zombies.ZombiesUtils
+import net.minecraft.init.Items
+import net.minecraft.item.Item
+import net.minecraft.item.ItemHoe
+import net.minecraft.network.play.client.C02PacketUseEntity
+import net.minecraft.network.play.client.C0APacketAnimation
+import net.minecraft.network.play.client.C0CPacketInput
+import net.minecraft.util.MovingObjectPosition
+import org.lwjgl.input.Mouse
 
 class SmartWeapon : Module("SmartWeapon", Category.Zombies) {
-    private var fill = BooleanSetting("Fill", true)
-    private var outline = BooleanSetting("Outline", true)
-    private var sendMessage = BooleanSetting("SendMessage", false)
-    private var width = NumberSetting("Width", 1, 0.1, 10, 0.1) { outline.value }
-    private var color1 = ColorSetting("FillColor", Color(255, 255, 255, 50)) { fill.value }
-    private var color2 = ColorSetting("OutlineColor", Color(255, 255, 255, 255)) { outline.value }
+    private var autoSwitchMode = ModeSetting("SwitchMode", 1,"0", "1")
+    private var rechangeCheck = BooleanSetting("Re-ChangingCheck", false)
+    private var shotGunFirst = BooleanSetting("ShotGunFirst", false)
+    private var shotGunFirstRange = NumberSetting("ShotGunFirstRange",2,0,6,0.1)
+    private var delay = NumberSetting("Delay",10,100,1000,10)
+
+    private val weaponList = mutableListOf<Int>()
+    private var canEcoWeapon = mutableListOf<Int>()
+    private var progress = 0
+    private val timer = TickTimer()
 
     init {
-        addSettings(fill, color1, outline, width, color2, sendMessage)
+        addSettings(autoSwitchMode, delay, rechangeCheck, shotGunFirst, shotGunFirstRange)
     }
 
     override fun onEnable() {
@@ -41,90 +48,110 @@ class SmartWeapon : Module("SmartWeapon", Category.Zombies) {
     override fun onDisable() {
         super.onDisable()
         using = false
+        weaponList.clear()
+        progress = 0
     }
 
     @Subscribe
-    fun onRender3D(e: EventRender3D) {
-        if (mc.theWorld.loadedEntityList != null){
-            mc.theWorld.loadedEntityList.stream()
-                .filter { it.isDead }
-                .filter { it is EntityZombie }
-                .filter { (it as EntityZombie).isChild }
-                .forEach {
+    fun onUpdate(e: EventUpdate) {
+        if (mc.thePlayer == null) {
+            return
+        }
 
-                    if (sendMessage.value){
-                        Utility.sendClientMessage(Konata.i18n["theoldonecheck.message"])
-                    }
-
-                    val x = it.posX - mc.renderManager.viewerPosX
-                    val y = it.posY - mc.renderManager.viewerPosY
-                    val z = it.posZ - mc.renderManager.viewerPosZ
-                    GL11.glPushMatrix()
-                    GlStateManager.enableAlpha()
-                    GlStateManager.enableBlend()
-                    GL11.glBlendFunc(770, 771)
-                    GL11.glDisable(3553)
-                    GL11.glEnable(2848)
-                    GL11.glDepthMask(false)
-                    val minX: Double = it.entityBoundingBox.minX
-                    val minY: Double = it.entityBoundingBox.minY
-                    val minZ: Double = it.entityBoundingBox.minZ
-                    val maxX: Double = it.entityBoundingBox.maxX
-                    val maxY: Double = it.entityBoundingBox.maxY
-                    val maxZ: Double = it.entityBoundingBox.maxZ
-                    it.entityBoundingBox
-                    if (fill.value) {
-                        val color = color1.value.color
-                        GL11.glPushMatrix()
-                        GlStateManager.color(
-                            color.red / 255.0f,
-                            color.green / 255.0f,
-                            color.blue / 255.0f,
-                            color.alpha / 255.0f
-                        )
-                        Render3DUtils.drawBoundingBox(
-                            WrapperAxisAlignedBB(
-                                x + minX - 0.01,
-                                y + minY - 0.01,
-                                z + minZ - 0.01,
-                                x + maxX,
-                                y + maxY,
-                                z + maxZ
-                            )
-                        )
-                        GL11.glPopMatrix()
-                    }
-                    if (outline.value) {
-                        val color = color2.value.color
-                        GL11.glPushMatrix()
-                        GlStateManager.color(
-                            color.red / 255.0f,
-                            color.green / 255.0f,
-                            color.blue / 255.0f,
-                            color.alpha / 255.0f
-                        )
-                        GL11.glLineWidth(width.value.toFloat())
-                        Render3DUtils.drawBoundingBoxOutline(
-                            WrapperAxisAlignedBB(
-                                x + minX - 0.005,
-                                y + minY - 0.005,
-                                z + minZ - 0.005,
-                                x + maxX,
-                                y + maxY,
-                                z + maxZ
-                            )
-                        )
-                        GL11.glPopMatrix()
-                    }
-                    GL11.glDisable(2848)
-                    GL11.glEnable(3553)
-//                if (throughBlock.value) {
-//                    GL11.glEnable(2929)
-//                }
-                    GL11.glDepthMask(true)
-                    GL11.glLineWidth(1.0f)
-                    GL11.glPopMatrix()
+        (0..8).forEach { number ->
+            mc.thePlayer.inventory.mainInventory[number]?.let {
+                if (ZombiesUtils.isWeapon(it.item) && weaponList.getOrNull(number) == null) {
+                    weaponList.add(number)
                 }
+            }
+        }
+
+        canEcoWeapon = weaponList.filter { isEcoWeapon(mc.thePlayer.inventory.mainInventory[it].item) }.toMutableList()
+    }
+
+    @Subscribe
+    fun onClick(e: EventMouseClick) {
+        if (e.button != 1) {
+            return
+        }
+
+        if (!ZombiesUtils.isWeapon(mc.thePlayer.heldItem.item)) {
+            return
+        }
+
+        if (!timer.tickAndReset(delay.value.toInt())) {
+            return
+        }
+
+        if (shotGunFirst.value) {
+            val result0 = mc.objectMouseOver
+            if (result0?.typeOfHit != MovingObjectPosition.MovingObjectType.ENTITY) {
+                val result = result0.entityHit
+                if (mc.thePlayer.getDistanceSqToEntity(result) <= shotGunFirstRange.value.toDouble() ) {
+                    (0..8).forEach { number ->
+                        mc.thePlayer.inventory.mainInventory[number]?.let {
+
+                            if (it.item == Items.iron_hoe || it.item == Items.flint_and_steel) {
+                                if (it.itemDamage != 0) {
+                                    progress++
+                                    if (autoSwitchMode.value == 0) {
+                                        mc.thePlayer.inventory.currentItem = weaponList[progress]
+                                    }
+                                    mc.thePlayer.inventory.currentItem = canEcoWeapon[progress]
+                                    return
+                                }
+                                NotificationManager.addNotification(Konata.i18n["smartweapon"],Konata.i18n["smartweapon.shotgunfirst.message"],2f)
+                                mc.thePlayer.inventory.currentItem = number
+                                return
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        when (autoSwitchMode.value) {
+            0 -> {
+                if (progress == weaponList.size) {
+                    progress = 0
+                }
+
+                if (rechangeCheck.value) {
+                    mc.thePlayer.inventory.mainInventory[weaponList[progress]]?.let {
+                        if (it.itemDamage != 0) {
+                            progress++
+                        }
+                    }
+                }
+
+                mc.thePlayer.inventory.currentItem = weaponList[progress]
+                progress++
+            }
+
+            1 -> {
+                if (progress == canEcoWeapon.size) {
+                    progress = 0
+                }
+
+                if (rechangeCheck.value) {
+                    mc.thePlayer.inventory.mainInventory[canEcoWeapon[progress]]?.let {
+                        if (it.itemDamage != 0) {
+                            progress++
+                        }
+                    }
+                }
+
+                mc.thePlayer.inventory.currentItem = canEcoWeapon[progress]
+                progress++
+            }
+        }
+    }
+
+    private fun isEcoWeapon(item: Item?): Boolean{
+        return when (item) {
+            Items.wooden_hoe -> true
+            Items.iron_hoe -> true
+            else -> false
         }
     }
 

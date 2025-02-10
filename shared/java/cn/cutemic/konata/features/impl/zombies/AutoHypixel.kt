@@ -1,4 +1,4 @@
-package cn.cutemic.konata.features.impl.utility
+package cn.cutemic.konata.features.impl.zombies
 
 import cn.cutemic.konata.Konata
 import cn.cutemic.konata.event.Subscribe
@@ -8,32 +8,29 @@ import cn.cutemic.konata.features.manager.Module
 import cn.cutemic.konata.features.settings.impl.BooleanSetting
 import cn.cutemic.konata.ui.notification.NotificationManager
 import net.minecraft.client.Minecraft
-import net.minecraftforge.fml.common.gameevent.TickEvent
 
 
-class AutoHypixel : Module("AutoHypixel", Category.Cheat) {
+class AutoHypixel : Module("AutoHypixel", Category.Zombies) {
     private var lobbyCheck = BooleanSetting("LobbyCheck", true)
-    private var gameCheck = BooleanSetting("GameCheck", true)
-
-    @JvmField
-    var isLobby = false
+    private var zombiesCheck = BooleanSetting("ZombiesCheck", true)
 
     init {
-        addSettings(lobbyCheck, gameCheck)
+        addSettings(lobbyCheck, zombiesCheck)
     }
 
     @Subscribe
     fun onTick(e: EventTick){
-        if (lobbyCheck.value){
-
-            if (isHypixelLobby()){
-                isLobby = true
-                NotificationManager.addNotification(Konata.i18n["autohypixel"],Konata.i18n["autohypixel.message.isinlobby"],2f)
+        if (isHypixelLobby() && !isLobby){
+            isLobby = true
+            NotificationManager.addNotification(Konata.i18n["autohypixel"],Konata.i18n["autohypixel.message.isinlobby"],2f)
+        } else {
+            isLobby = false
+            if (isZombies() && !isZombies) {
+                NotificationManager.addNotification(Konata.i18n["autohypixel"],Konata.i18n["autohypixel.message.isinzombies"],2f)
+                isZombies = true
             } else {
-                isLobby = false
-                NotificationManager.addNotification(Konata.i18n["autohypixel"],Konata.i18n["autohypixel.message.notinlobby"],2f)
+                isZombies = false
             }
-
         }
     }
 
@@ -55,6 +52,24 @@ class AutoHypixel : Module("AutoHypixel", Category.Cheat) {
         return false
     }
 
+    private fun isZombies(): Boolean {
+        if (!zombiesCheck.value) {
+            return false
+        }
+        val strings = arrayOf("Practice Dummy", "训练用僵尸")
+
+        for (entity in Minecraft.getMinecraft().theWorld.loadedEntityList) {
+            if (entity.name.startsWith("§a")) {
+                for (string in strings) {
+                    if (entity.name == "§a$string") {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     override fun onEnable() {
         super.onEnable()
         using = true
@@ -67,5 +82,10 @@ class AutoHypixel : Module("AutoHypixel", Category.Cheat) {
 
     companion object {
         var using = false
+        @JvmField
+        var isLobby = false
+
+        @JvmField
+        var isZombies = false
     }
 }

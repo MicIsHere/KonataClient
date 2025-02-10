@@ -10,7 +10,7 @@ import cn.cutemic.konata.features.impl.interfaces.*
 import cn.cutemic.konata.features.impl.optimizes.*
 import cn.cutemic.konata.features.impl.render.*
 import cn.cutemic.konata.features.impl.utility.*
-import cn.cutemic.konata.features.impl.zombies.TheOldOneCheck
+import cn.cutemic.konata.features.impl.zombies.*
 import cn.cutemic.konata.interfaces.ProviderManager
 import cn.cutemic.konata.ui.click.MainPanel
 import java.util.*
@@ -55,7 +55,6 @@ class ModuleManager {
         modules.add(MinimizedBobbing())
         modules.add(MoreParticles())
         modules.add(FPSDisplay())
-        modules.add(IRC())
         modules.add(ArmorDisplay())
         modules.add(BetterChat())
         modules.add(ComboDisplay())
@@ -96,7 +95,13 @@ class ModuleManager {
         modules.add(ClientCommand())
         modules.add(MiniMap())
         modules.add(DirectionDisplay())
+
+        //Zombies
         modules.add(TheOldOneCheck())
+        modules.add(AutoHypixel())
+        modules.add(HidePlayer())
+        modules.add(SmartWeapon())
+        modules.add(AntiWeaponLag())
 
         if (ProviderManager.constants.getVersion() == "1.12.2") {
             modules.add(HideIndicator())

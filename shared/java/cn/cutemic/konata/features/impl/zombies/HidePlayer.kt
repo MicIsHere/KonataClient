@@ -26,17 +26,27 @@ class HidePlayer : InterfaceModule("HidePlayer", Category.Zombies) {
 
     @SubscribeEvent
     fun onRenderLiving(event: RenderLivingEvent.Pre<EntityLivingBase>) {
-        if (this.isEnabled && event.entity is EntityPlayer && (event.entity != mc.thePlayer) && (event.entity.getDistanceSqToEntity(mc.thePlayer) < hideRadius.value.toFloat())
-        ) {
-            event.isCanceled = true
 
-            if (!isHide){
-                isHide = true
-                NotificationManager.addNotification(Konata.i18n["hideplayer"],Konata.i18n["hideplayer.message.hidedplayer"],2f)
-            }
+        if (!this.isEnabled) {
+            return
+        }
 
-        } else if (isHide) {
-            NotificationManager.addNotification(Konata.i18n["hideplayer"],Konata.i18n["hideplayer.message.nothidedplayer"],2f)
+        if (event.entity !is EntityPlayer){
+            return
+        }
+
+        if (event.entity == mc.thePlayer) {
+            return
+        }
+
+        if (event.entity.getDistanceSqToEntity(mc.thePlayer) > hideRadius.value.toFloat()) {
+            return
+        }
+
+        event.isCanceled = true
+        if (!isHide){
+            isHide = true
+            NotificationManager.addNotification(Konata.i18n["hideplayer"],Konata.i18n["hideplayer.message.hidedplayer"],2f)
         }
     }
 
